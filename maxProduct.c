@@ -1,39 +1,45 @@
-// C program to find Maximum Product Subarray
-#include <stdio.h>
 #define MAX(a, b) ((a > b) ? a : b)
 #define MIN(a, b) ((a < b) ? a : b)
 
+int	precheck(int arr[], int n, int *res)
+{
+	register int	negs = 0;
+	
+	while (n >= 0)
+	{
+		if (arr[n] == 0)
+			return (0);
+		else if (arr[n] < 0)
+			negs++;
+		*res *= arr[n];
+		n--;
+	}
+	if (negs % 2 == 1)
+		return (0);
+	return (1);
+}
 
-/* Returns the product of max product subarray. */
 int maxProductSubarray(int arr[], int n)
 {
-	if (n < 1) {
-		return 0;
+	int	res = 1;
+	register int temp;
+	if (n <= 0)
+		return (0);
+	if (precheck(arr, n, &res) == 1)
+		return (res);
+	register int	vars[3] = {arr[0], arr[0], arr[0]};
+	while (n >= 0) 
+	{
+		temp
+			= MAX(((vars[1] > 1) ? arr[n] * vars[1] : arr[n]),
+				arr[n] * vars[0]);
+		vars[0]
+			= MIN(((vars[1] < 1) ? arr[n] * vars[1] : arr[n]),
+				arr[n] * vars[0]);
+		vars[1] = temp;
+		vars[2] = MAX(vars[2], vars[1]);
+		n--;
 	}
-	// max positive product
-	// ending at the current position
-	int max_ending_here = arr[0];
-
-	// min negative product ending
-	// at the current position
-	int min_ending_here = arr[0];
-
-	// Initialize overall max product
-	int max_so_far = arr[0];
-	/* Traverse through the array.
-	the maximum product subarray ending at an index
-	will be the maximum of the element itself,
-	the product of element and max product ending previously
-	and the min product ending previously. */
-	for (int i = 1; i < n; i++) {
-		int temp
-			= MAX(MAX(arr[i], arr[i] * max_ending_here),
-				arr[i] * min_ending_here);
-		min_ending_here
-			= MIN(MIN(arr[i], arr[i] * max_ending_here),
-				arr[i] * min_ending_here);
-		max_ending_here = temp;
-		max_so_far = MAX(max_so_far, max_ending_here);
-	}
-	return max_so_far;
+	return vars[2];
 }
+
